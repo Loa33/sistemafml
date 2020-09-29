@@ -1,0 +1,5 @@
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Datos.deps.json
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Datos.dll
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Datos.csprojAssemblyReference.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Datos.AssemblyInfoInputs.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Datos.AssemblyInfo.cs

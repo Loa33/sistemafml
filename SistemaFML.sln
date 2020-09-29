@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datos", "Datos\Datos.csproj", "{8CA123BC-A4E0-46E2-A1FC-0AAF487FEF84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entidades", "Entidades\Entidades.csproj", "{2D195C2C-576A-4B93-B527-2A46FC2CAC2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemaFML", "SistemaFML\SistemaFML.csproj", "{E34D7E35-033B-4346-94D4-CD0FCDABED0C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CA123BC-A4E0-46E2-A1FC-0AAF487FEF84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CA123BC-A4E0-46E2-A1FC-0AAF487FEF84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CA123BC-A4E0-46E2-A1FC-0AAF487FEF84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CA123BC-A4E0-46E2-A1FC-0AAF487FEF84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D195C2C-576A-4B93-B527-2A46FC2CAC2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D195C2C-576A-4B93-B527-2A46FC2CAC2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D195C2C-576A-4B93-B527-2A46FC2CAC2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D195C2C-576A-4B93-B527-2A46FC2CAC2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E34D7E35-033B-4346-94D4-CD0FCDABED0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E34D7E35-033B-4346-94D4-CD0FCDABED0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E34D7E35-033B-4346-94D4-CD0FCDABED0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E34D7E35-033B-4346-94D4-CD0FCDABED0C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ED5F9F7F-D2F1-45CF-A0E6-A4D66500BACA}
+	EndGlobalSection
+EndGlobal
