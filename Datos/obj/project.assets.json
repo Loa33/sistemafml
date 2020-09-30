@@ -3661,9 +3661,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Repositorio\\SistemaFML\\Datos\\AccesoDatos.csproj",
-      "projectName": "AccesoDatos",
-      "projectPath": "D:\\Repositorio\\SistemaFML\\Datos\\AccesoDatos.csproj",
+      "projectUniqueName": "D:\\Repositorio\\SistemaFML\\Datos\\Infraestructura.csproj",
+      "projectName": "Infraestructura",
+      "projectPath": "D:\\Repositorio\\SistemaFML\\Datos\\Infraestructura.csproj",
       "packagesPath": "C:\\Users\\loana\\.nuget\\packages\\",
       "outputPath": "D:\\Repositorio\\SistemaFML\\Datos\\obj\\",
       "projectStyle": "PackageReference",

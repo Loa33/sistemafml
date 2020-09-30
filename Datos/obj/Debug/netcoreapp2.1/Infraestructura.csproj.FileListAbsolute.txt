@@ -1,0 +1,15 @@
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Infraestructura.deps.json
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Infraestructura.runtimeconfig.json
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Infraestructura.runtimeconfig.dev.json
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Infraestructura.dll
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Infraestructura.pdb
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Entidades.dll
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Entidades.pdb
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.csprojAssemblyReference.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.AssemblyInfoInputs.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.AssemblyInfo.cs
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.csproj.CoreCompileInputs.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.csproj.CopyComplete
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.dll
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.pdb
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\Infraestructura.genruntimeconfig.cache

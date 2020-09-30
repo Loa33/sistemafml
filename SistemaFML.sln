@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datos", "Datos\Datos.csproj", "{8CA123BC-A4E0-46E2-A1FC-0AAF487FEF84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infraestructura", "Datos\Infraestructura.csproj", "{8CA123BC-A4E0-46E2-A1FC-0AAF487FEF84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entidades", "Entidades\Entidades.csproj", "{2D195C2C-576A-4B93-B527-2A46FC2CAC2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entidades", "Entidades\Entidades.csproj", "{2D195C2C-576A-4B93-B527-2A46FC2CAC2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SistemaFML", "SistemaFML\SistemaFML.csproj", "{E34D7E35-033B-4346-94D4-CD0FCDABED0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "SistemaFML\Web.csproj", "{E34D7E35-033B-4346-94D4-CD0FCDABED0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

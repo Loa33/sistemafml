@@ -1,0 +1,15 @@
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\AccesoDatos.deps.json
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\AccesoDatos.runtimeconfig.json
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\AccesoDatos.runtimeconfig.dev.json
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\AccesoDatos.dll
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\AccesoDatos.pdb
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Entidades.dll
+D:\Repositorio\SistemaFML\Datos\bin\Debug\netcoreapp2.1\Entidades.pdb
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.csprojAssemblyReference.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.AssemblyInfoInputs.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.AssemblyInfo.cs
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.csproj.CoreCompileInputs.cache
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.csproj.CopyComplete
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.dll
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.pdb
+D:\Repositorio\SistemaFML\Datos\obj\Debug\netcoreapp2.1\AccesoDatos.genruntimeconfig.cache

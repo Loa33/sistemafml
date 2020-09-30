@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\loana\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\loana\\.nuget\\packages"
+    ]
+  }
+}
