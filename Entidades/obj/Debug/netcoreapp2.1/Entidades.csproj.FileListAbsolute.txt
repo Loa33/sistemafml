@@ -6,3 +6,4 @@ D:\Repositorio\SistemaFML\Entidades\obj\Debug\netcoreapp2.1\Entidades.AssemblyIn
 D:\Repositorio\SistemaFML\Entidades\obj\Debug\netcoreapp2.1\Entidades.csproj.CoreCompileInputs.cache
 D:\Repositorio\SistemaFML\Entidades\obj\Debug\netcoreapp2.1\Entidades.dll
 D:\Repositorio\SistemaFML\Entidades\obj\Debug\netcoreapp2.1\Entidades.pdb
+D:\Repositorio\SistemaFML\Entidades\obj\Debug\netcoreapp2.1\Entidades.csprojAssemblyReference.cache

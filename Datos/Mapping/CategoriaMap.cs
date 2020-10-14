@@ -11,10 +11,8 @@ namespace AccesoDatos.Mapping
     {
         public void Configure(EntityTypeBuilder<Categoria> builder)
         {
-            builder.ToTable("categoria")
+            builder.ToTable("Categoria")
                 .HasKey(c => c.IdCategoria);
-            builder.Property(c => c.Nombre);
-            builder.Property(c => c.Descripcion);
 
         }
     }

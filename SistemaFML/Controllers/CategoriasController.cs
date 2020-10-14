@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
+using Web.Models;
 
 namespace SistemaFML.Controllers
 {
@@ -21,47 +22,62 @@ namespace SistemaFML.Controllers
             _context = context;
         }
 
-        // GET: api/Categorias
-        [HttpGet]
-        public IEnumerable<Categoria> GetCategorias()
+        // GET: api/Categorias/ListarCategorias
+        [HttpGet("[action]")]
+        public async Task <IEnumerable<CategoriaViewModel>> ListarCategorias()
         {
-            return _context.Categorias;
+            var Categoria = await _context.Categorias.ToListAsync();
+            return Categoria.Select(c => new CategoriaViewModel
+            {
+                IdCategoria = c.IdCategoria,
+                Nombre = c.Nombre,
+                Descripcion = c.Descripcion,
+                Estado = c.Estado
+            });
         }
 
-        // GET: api/Categorias/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategoria([FromRoute] int id)
+        // GET: api/Categorias/Mostrart/1
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> Mostrar([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var Categoria = await _context.Categorias.FindAsync(id);
 
-            var categoria = await _context.Categorias.FindAsync(id);
-
-            if (categoria == null)
+            if(Categoria == null)
             {
                 return NotFound();
             }
-
-            return Ok(categoria);
+            return Ok(new CategoriaViewModel
+            {
+                IdCategoria = Categoria.IdCategoria,
+                Nombre = Categoria.Nombre,
+                Descripcion = Categoria.Descripcion,
+                Estado = Categoria.Estado
+            });
         }
 
-        // PUT: api/Categorias/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategoria([FromRoute] int id, [FromBody] Categoria categoria)
+        // PUT: api/Categorias/ActualizarCategoria
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ActualizarCategoria([FromBody] CategoriaViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != categoria.IdCategoria)
+            if (model.IdCategoria <=0 )
             {
                 return BadRequest();
             }
 
-            _context.Entry(categoria).State = EntityState.Modified;
+            var categoria = await _context.Categorias.FirstOrDefaultAsync( c => c.IdCategoria == model.IdCategoria);
+
+            if(categoria == null)
+            {
+                return NotFound();
+            }
+
+            categoria.Nombre = model.Nombre;
+            categoria.Descripcion = model.Descripcion;
 
             try
             {
@@ -69,37 +85,45 @@ namespace SistemaFML.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CategoriaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest();
             }
 
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/Categorias
-        [HttpPost]
-        public async Task<IActionResult> PostCategoria([FromBody] Categoria categoria)
+        // POST: api/Categorias/CrearCategoria
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CrearCategoria([FromBody] CategoriaViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Categorias.Add(categoria);
-            await _context.SaveChangesAsync();
+            Categoria categoria = new Categoria
+            {
+                Nombre = model.Nombre,
+                Descripcion = model.Descripcion,
+                Estado = true
+            };
 
-            return CreatedAtAction("GetCategoria", new { id = categoria.IdCategoria }, categoria);
+            _context.Categorias.Add(categoria);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
 
-        // DELETE: api/Categorias/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoria([FromRoute] int id)
+        // DELETE: api/Categorias/Eliminar/1
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> EliminarCategoria([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -113,14 +137,77 @@ namespace SistemaFML.Controllers
             }
 
             _context.Categorias.Remove(categoria);
-            await _context.SaveChangesAsync();
-
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            
             return Ok(categoria);
         }
 
         private bool CategoriaExists(int id)
         {
             return _context.Categorias.Any(e => e.IdCategoria == id);
+        }
+
+        // PUT: api/Categorias/DesactivarCategoria/1
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> DesactivarCategoria([FromRoute] int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var Categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == id);
+
+            if (Categoria == null)
+            {
+                return NotFound();
+            }
+            Categoria.Estado = false;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        // PUT: api/Categorias/ActivarCategoria/1
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> ActivarCategoria([FromRoute] int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var Categoria = await _context.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == id);
+
+            if (Categoria == null)
+            {
+                return NotFound();
+            }
+            Categoria.Estado = true;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
     }
 }
