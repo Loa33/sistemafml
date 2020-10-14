@@ -11,7 +11,7 @@ namespace AccesoDatos.Mapping
     {
         public void Configure(EntityTypeBuilder<Proveedor> builder)
         {
-            builder.ToTable("proveedor")
+            builder.ToTable("Proveedor")
                 .HasKey(p => p.IdProveedor);
         }
     }

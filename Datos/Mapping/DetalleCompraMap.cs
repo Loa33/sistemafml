@@ -10,7 +10,7 @@ namespace Infraestructura.Mapping
     {
         public void Configure(EntityTypeBuilder<DetalleCompra> builder)
         {
-            builder.ToTable("detallecompra")
+            builder.ToTable("Detallecompra")
                 .HasKey(d => d.IdDetalleCompra);
         }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
+using Web.Models.Compra;
 
 namespace Web.Controllers
 {
@@ -21,11 +22,31 @@ namespace Web.Controllers
             _context = context;
         }
 
-        // GET: api/Compras
-        [HttpGet]
-        public IEnumerable<Compra> GetCompras()
+        // GET: api/Compras/Listar
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<CompraViewModel>> Listar()
         {
-            return _context.Compras;
+            var compra = await _context.Compras
+                .Include(c => c.Usuario)
+                .Include(c => c.Proveedor)
+                .OrderByDescending(c => c.IdCompra)
+                .Take(100)
+                .ToListAsync();
+
+            return compra.Select(c => new CompraViewModel
+            {
+                IdCompra = c.IdCompra,
+                IdProveedor = c.IdProveedor,
+                Proveedor = c.Proveedor.Nombre,
+                IdUsuario = c.IdUsuario,
+                Usuario = c.Usuario.Nombre,
+                SerieComprobante = c.SerieComprobante,
+                NumeroComprobante = c.NumeroComprobante,
+                Fecha = c.Fecha,
+                Igv = c.Igv,
+                Total = c.Total,
+                Estado = c.Estado
+            });
         }
 
         // GET: api/Compras/5

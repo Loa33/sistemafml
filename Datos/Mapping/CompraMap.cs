@@ -11,8 +11,11 @@ namespace AccesoDatos.Mapping
     {
         public void Configure(EntityTypeBuilder<Compra> builder)
         {
-            builder.ToTable("compra")
+            builder.ToTable("Compra")
                 .HasKey(c => c.IdCompra);
+            builder.HasOne(c => c.Proveedor)
+                .WithMany(p => p.Compras)
+                .HasForeignKey(c => c.IdProveedor);
         }
     }
 }

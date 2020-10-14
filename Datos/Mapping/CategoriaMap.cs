@@ -13,6 +13,8 @@ namespace AccesoDatos.Mapping
         {
             builder.ToTable("Categoria")
                 .HasKey(c => c.IdCategoria);
+            builder.Property(c => c.Descripcion)
+                .HasMaxLength(256);
 
         }
     }
