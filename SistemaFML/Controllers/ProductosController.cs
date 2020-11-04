@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
+using Web.Models.Producto;
 
 namespace Web.Controllers
 {
@@ -21,47 +22,81 @@ namespace Web.Controllers
             _context = context;
         }
 
-        // GET: api/Productoes
-        [HttpGet]
-        public IEnumerable<Producto> GetProductos()
+        // GET: api/Productos/Listar
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<ProductoViewModel>> Listar()
         {
-            return _context.Productos;
+            var producto = await _context.Productos.Include(a => a.Categoria).ToListAsync();
+
+            return producto.Select(a => new ProductoViewModel
+            {
+                IdProducto = a.IdProducto,
+                IdCategoria = a.IdCategoria,
+                Categoria = a.Categoria.Nombre,
+                Codigo = a.Codigo,
+                Nombre = a.Nombre,
+                Stock = a.Stock,
+                PrecioVenta = a.PrecioVenta,
+                Descripcion = a.Descripcion,
+                Estado = a.Estado
+            });
+
         }
 
-        // GET: api/Productoes/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProducto([FromRoute] int id)
+        // GET: api/Productos/Mostrar/1
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> Mostrar([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            var producto = await _context.Productos.FindAsync(id);
+            var producto = await _context.Productos.Include(a => a.Categoria).
+                SingleOrDefaultAsync(a => a.IdProducto == id);
 
             if (producto == null)
             {
                 return NotFound();
             }
 
-            return Ok(producto);
+            return Ok(new ProductoViewModel
+            {
+                IdProducto = producto.IdProducto,
+                IdCategoria = producto.IdCategoria,
+                Categoria = producto.Categoria.Nombre,
+                Codigo = producto.Codigo,
+                Nombre = producto.Nombre,
+                Descripcion = producto.Descripcion,
+                Stock = producto.Stock,
+                PrecioVenta = producto.PrecioVenta,
+                Estado = producto.Estado
+            });
         }
 
-        // PUT: api/Productoes/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProducto([FromRoute] int id, [FromBody] Producto producto)
+        // PUT: api/Productos/Actualizar
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ActualizarProducto([FromBody] EditarViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != producto.IdProducto)
+            if (model.IdProducto <= 0)
             {
                 return BadRequest();
             }
 
-            _context.Entry(producto).State = EntityState.Modified;
+            var producto = await _context.Productos.FirstOrDefaultAsync(a => a.IdProducto == model.IdProducto);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            producto.IdCategoria = model.IdCategoria;
+            producto.Codigo = model.Codigo;
+            producto.Nombre = model.Nombre;
+            producto.PrecioVenta = model.PrecioVenta;
+            producto.Stock = model.Stock;
+            producto.Descripcion = model.Descripcion;
 
             try
             {
@@ -69,54 +104,110 @@ namespace Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                // Guardar Excepción
+                return BadRequest();
             }
 
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/Productoes
-        [HttpPost]
-        public async Task<IActionResult> PostProducto([FromBody] Producto producto)
+        // POST: api/Productos/Crear
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            Producto producto = new Producto
+            {
+                IdCategoria = model.IdCategoria,
+                Codigo = model.Codigo,
+                Nombre = model.Nombre,
+                PrecioVenta = model.PrecioVenta,
+                Stock = model.Stock,
+                Descripcion = model.Descripcion,
+                Estado = true
+            };
 
             _context.Productos.Add(producto);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetProducto", new { id = producto.IdProducto }, producto);
-        }
-
-        // DELETE: api/Productoes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProducto([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
             }
 
-            var producto = await _context.Productos.FindAsync(id);
+            return Ok();
+        }
+
+        // PUT: api/Productos/Desactivar/1
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> Desactivar([FromRoute] int id)
+        {
+
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var producto = await _context.Productos.FirstOrDefaultAsync(a => a.IdProducto == id);
+
             if (producto == null)
             {
                 return NotFound();
             }
 
-            _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
+            producto.Estado = false;
 
-            return Ok(producto);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Guardar Excepción
+                return BadRequest();
+            }
+
+            return Ok();
         }
+
+        // PUT: api/Productos/Activar/1
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> Activar([FromRoute] int id)
+        {
+
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var producto = await _context.Productos.FirstOrDefaultAsync(a => a.IdProducto == id);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            producto.Estado = true;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Guardar Excepción
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
 
         private bool ProductoExists(int id)
         {

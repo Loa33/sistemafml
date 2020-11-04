@@ -8,7 +8,6 @@ namespace Web.Models.Proveedor
 {
     public class EditarViewModel
     {
-        [Required]
         public int IdProveedor { get; set; }
         [Required]
         public string Nombre { get; set; }

@@ -21,7 +21,7 @@ namespace Entidades
         public byte[] PasswordSalt { get; set; }
         public bool Estado { get; set; }
 
-        public Rol rol { get; set; }
+        public Rol Rol { get; set; }
         public ICollection<Compra> Compras { get; set; }
         public ICollection<Venta> Ventas { get; set; }
     }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
+using Web.Models.Proveedor;
 
 namespace Web.Controllers
 {
@@ -22,46 +23,93 @@ namespace Web.Controllers
         }
 
         // GET: api/Proveedores
-        [HttpGet]
-        public IEnumerable<Proveedor> GetProveedores()
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<ProveedorViewModel>> Listar()
         {
-            return _context.Proveedores;
+            var proveedor = await _context.Proveedores.ToListAsync();
+
+            return proveedor.Select(p => new ProveedorViewModel
+            {
+                IdProveedor = p.IdProveedor,
+                Nombre = p.Nombre,
+                Ruc = p.Ruc,
+                Direccion = p.Direccion,
+                Telefono = p.Telefono,
+                Email = p.Email,
+                Estado = p.Estado
+            });
+
         }
 
-        // GET: api/Proveedores/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetProveedor([FromRoute] int id)
+        
+
+        // POST: api/Proveedors/Crear
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var proveedor = await _context.Proveedores.FindAsync(id);
+            var email = model.Email.ToLower();
+
+            if (await _context.Proveedores.AnyAsync(p => p.Email == email))
+            {
+                return BadRequest("El email ya existe");
+            }
+
+            Proveedor proveedor = new Proveedor
+            {
+                Nombre = model.Nombre,
+                Ruc = model.Ruc,
+                Direccion = model.Direccion,
+                Telefono = model.Telefono,
+                Email = model.Email.ToLower(),
+                Estado = true
+            };
+
+            _context.Proveedores.Add(proveedor);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        // PUT: api/Proveedors/Actualizar
+        [HttpPut("[action]")]
+        public async Task<IActionResult> Actualizar([FromBody] EditarViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (model.IdProveedor <= 0)
+            {
+                return BadRequest();
+            }
+
+            var proveedor = await _context.Proveedores.FirstOrDefaultAsync(p => p.IdProveedor == model.IdProveedor);
 
             if (proveedor == null)
             {
                 return NotFound();
             }
 
-            return Ok(proveedor);
-        }
+            proveedor.Nombre = model.Nombre;
+            proveedor.Ruc = model.Ruc;
+            proveedor.Telefono = model.Telefono;
+            proveedor.Direccion = model.Direccion;
+            proveedor.Email = model.Email.ToLower();
+            proveedor.Estado = true;
 
-        // PUT: api/Proveedores/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProveedor([FromRoute] int id, [FromBody] Proveedor proveedor)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != proveedor.IdProveedor)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(proveedor).State = EntityState.Modified;
 
             try
             {
@@ -69,54 +117,77 @@ namespace Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProveedorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                // Guardar Excepción
+                return BadRequest();
             }
 
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/Proveedores
-        [HttpPost]
-        public async Task<IActionResult> PostProveedor([FromBody] Proveedor proveedor)
+        // PUT: api/Proveedores/Desactivar/1
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> Desactivar([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
+
+            if (id <= 0)
             {
-                return BadRequest(ModelState);
+                return BadRequest();
             }
 
-            _context.Proveedores.Add(proveedor);
-            await _context.SaveChangesAsync();
+            var proveedor = await _context.Proveedores.FirstOrDefaultAsync(p => p.IdProveedor == id);
 
-            return CreatedAtAction("GetProveedor", new { id = proveedor.IdProveedor }, proveedor);
-        }
-
-        // DELETE: api/Proveedores/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProveedor([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var proveedor = await _context.Proveedores.FindAsync(id);
             if (proveedor == null)
             {
                 return NotFound();
             }
 
-            _context.Proveedores.Remove(proveedor);
-            await _context.SaveChangesAsync();
+            proveedor.Estado = false;
 
-            return Ok(proveedor);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Guardar Excepción
+                return BadRequest();
+            }
+
+            return Ok();
         }
+
+        // PUT: api/Proveedores/Activar/1
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> Activar([FromRoute] int id)
+        {
+
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var proveedor = await _context.Proveedores.FirstOrDefaultAsync(p => p.IdProveedor == id);
+
+            if (proveedor == null)
+            {
+                return NotFound();
+            }
+
+            proveedor.Estado = true;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                // Guardar Excepción
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
 
         private bool ProveedorExists(int id)
         {

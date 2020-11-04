@@ -27,9 +27,15 @@ namespace SistemaFML
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Todos",
+                   builder => builder.WithOrigins("*").WithHeaders("*").WithMethods("*"));
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<DbContextSistemaFML>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("Conexion")));
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,6 +50,7 @@ namespace SistemaFML
                 app.UseHsts();
             }
 
+            app.UseCors("Todos");
             app.UseHttpsRedirection();
             app.UseMvc();
         }

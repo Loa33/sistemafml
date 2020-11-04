@@ -11,7 +11,6 @@ namespace Datos
     public class DbContextSistemaFML : DbContext
     {
         public DbSet<Categoria> Categorias { get; set; }
-        public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Compra> Compras { get; set; }
         public DbSet<DetalleCompra> DetalleCompras { get; set; }
         public DbSet<Producto> Productos { get; set; }
@@ -19,6 +18,7 @@ namespace Datos
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<DetalleVenta> DetalleVentas { get; set; }
+        public DbSet<Rol> Roles { get; set; }
 
         public DbContextSistemaFML(DbContextOptions<DbContextSistemaFML> options) :base(options)
         {
@@ -29,7 +29,6 @@ namespace Datos
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CategoriaMap());
-            modelBuilder.ApplyConfiguration(new ClienteMap());
             modelBuilder.ApplyConfiguration(new CompraMap());
             modelBuilder.ApplyConfiguration(new DetalleCompraMap());
             modelBuilder.ApplyConfiguration(new ProductoMap());
@@ -37,6 +36,7 @@ namespace Datos
             modelBuilder.ApplyConfiguration(new UsuarioMap());
             modelBuilder.ApplyConfiguration(new VentaMap());
             modelBuilder.ApplyConfiguration(new DetalleVentaMap());
+            modelBuilder.ApplyConfiguration(new RolMap());
         }
     }
 }

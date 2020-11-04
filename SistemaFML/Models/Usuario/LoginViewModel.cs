@@ -10,7 +10,7 @@ namespace Web.Models.Usuario
     {
         [Required]
         [EmailAddress]
-        public string email { get; set; }
+        public string Email { get; set; }
         [Required]
         public string Password { get; set; }
     }

@@ -8,10 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
 using Web.Models;
+using Web.Models.Categoria;
+using Microsoft.AspNetCore.Cors;
 
 namespace SistemaFML.Controllers
 {
     [Route("api/[controller]")]
+    [EnableCors("Todos")]
     [ApiController]
     public class CategoriasController : ControllerBase
     {
@@ -92,6 +95,7 @@ namespace SistemaFML.Controllers
         }
 
         // POST: api/Categorias/CrearCategoria
+        [EnableCors("Todos")]
         [HttpPost("[action]")]
         public async Task<IActionResult> CrearCategoria([FromBody] CategoriaViewModel model)
         {
@@ -180,6 +184,20 @@ namespace SistemaFML.Controllers
             }
 
             return Ok();
+        }
+
+        // GET: api/Categorias/Listar
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<SelectViewModel>> Select()
+        {
+            var categoria = await _context.Categorias.Where(c => c.Estado == true).ToListAsync();
+
+            return categoria.Select(c => new SelectViewModel
+            {
+                IdCategoria = c.IdCategoria,
+                Nombre = c.Nombre
+            });
+
         }
 
         // PUT: api/Categorias/ActivarCategoria/1

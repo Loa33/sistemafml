@@ -19,7 +19,7 @@ namespace Web.Models.Producto
         [Required]
         public decimal PrecioVenta { get; set; }
         [Required]
-        public int stock { get; set; }
+        public int Stock { get; set; }
         public string Descripcion { get; set; }
     }
 }
