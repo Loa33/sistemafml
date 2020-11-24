@@ -67,7 +67,9 @@
         methods:{
             listar(){
                 let me=this;
-                axios.get('api/Roles/Listar').then(function(response){
+                let header={"Authorization" : "Bearer " + this.$store.state.token};
+                let configuracion = {headers : header};
+                axios.get('api/Roles/Listar', configuracion).then(function(response){
                     me.roles=response.data;
                 }).catch(function(error){
                     console.log(error);

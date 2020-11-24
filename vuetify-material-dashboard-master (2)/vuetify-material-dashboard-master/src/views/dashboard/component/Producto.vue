@@ -6,7 +6,7 @@
       <v-col cols="12">
         <base-material-card color="#1c629e">
           <template v-slot:heading>
-            <div class="display-2 font-weight-light">Compras</div>
+            <div class="display-2 font-weight-light">Productos</div>
             <div class="subtitle-1 font-weight-light"></div>
           </template>
 
@@ -217,6 +217,7 @@ export default {
       adAccion: 0,
       adNombre: "",
       adId: "",
+      error: null,
     };
   },
   computed: {
@@ -238,8 +239,10 @@ export default {
   methods: {
     listar() {
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
       axios
-        .get("api/Productos/Listar")
+        .get("api/Productos/Listar",configuracion)
         .then(function (response) {
           //console.log(response);
           me.productos = response.data;
@@ -250,9 +253,11 @@ export default {
     },
     select() {
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
       var categoriasArray = [];
       axios
-        .get("api/Categorias/Select")
+        .get("api/Categorias/Select", configuracion)
         .then(function (response) {
           categoriasArray = response.data;
           categoriasArray.map(function (x) {
@@ -292,6 +297,8 @@ export default {
       if (this.validar()) {
         return;
       }
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
       if (this.editedIndex > -1) {
         //Código para editar
         //Código para guardar
@@ -305,14 +312,16 @@ export default {
             stock: me.stock,
             precioVenta: me.precioVenta,
             descripcion: me.descripcion,
-          })
+          }, configuracion)
           .then(function (response) {
             me.close();
             me.listar();
             me.limpiar();
           })
-          .catch(function (error) {
-            console.log(error);
+          .catch(function (err) {
+            if(err.response.status==403){
+            me.$swal('No tiene permisos para realizar esta acción');
+          }
           });
       } else {
         //Código para guardar
@@ -325,14 +334,16 @@ export default {
             stock: me.stock,
             precioVenta: me.precioVenta,
             descripcion: me.descripcion,
-          })
+          }, configuracion)
           .then(function (response) {
             me.close();
             me.listar();
             me.limpiar();
           })
-          .catch(function (error) {
-            console.log(error);
+          .catch(function (err) {
+            if(err.response.status==403){
+            me.$swal('No tiene permisos para realizar esta acción');
+            }
           });
       }
     },
@@ -376,8 +387,10 @@ export default {
     },
     activar() {
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
       axios
-        .put("api/Productos/Activar/" + this.adId, {})
+        .put("api/Productos/Activar/" + this.adId, {}, configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -385,14 +398,17 @@ export default {
           me.adId = "";
           me.listar();
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch(function (err) {
+          if(err.response.status==403 || err.response.status==401){
+            me.$swal('No tiene permisos para realizar esta acción');}
         });
     },
     desactivar() {
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
       axios
-        .put("api/Productos/Desactivar/" + this.adId, {})
+        .put("api/Productos/Desactivar/" + this.adId, {}, configuracion)
         .then(function (response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -400,8 +416,9 @@ export default {
           me.adId = "";
           me.listar();
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch(function (err) {
+          if(err.response.status==403 || err.response.status==401){
+            me.$swal('No tiene permisos para realizar esta acción');}
         });
     },
   },

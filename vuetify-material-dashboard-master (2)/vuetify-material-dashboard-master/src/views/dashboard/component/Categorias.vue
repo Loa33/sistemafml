@@ -183,8 +183,10 @@ export default {
   methods: {
     listar() {
       let me = this;
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
       axios
-        .get("api/Categorias/ListarCategorias")
+        .get("api/Categorias/ListarCategorias", configuracion)
         .then(function (response) {
           //console.log(response);
           me.categorias = response.data;
@@ -223,6 +225,8 @@ export default {
       if(this.validar()){
         return;
       }
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
       if(this.editedIndex > -1){
         let me = this;
         console.log(me.id);
@@ -231,7 +235,7 @@ export default {
             'nombre': me.nombre,
             'descripcion': me.descripcion
             
-          }).then(function(response){
+          }, configuracion).then(function(response){
               me.close();
               me.listar();
               me.limpiar();
@@ -243,7 +247,7 @@ export default {
           axios.post('api/Categorias/CrearCategoria', {
             'nombre': me.nombre,
             'descripcion': me.descripcion
-          }).then(function(response){
+          }, configuracion).then(function(response){
               me.close();
               me.listar();
               me.limpiar();
@@ -284,7 +288,9 @@ export default {
     },
     activar(){
       let me = this;
-      axios.put('api/Categorias/ActivarCategoria/'+this.adId,{}).then(function(response){
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
+      axios.put('api/Categorias/ActivarCategoria/'+this.adId,{}, configuracion).then(function(response){
         me.adModal=0;
         me.adAccion=0;
         me.adNombre="";
@@ -297,7 +303,9 @@ export default {
     },
     desactivar(){
       let me = this;
-        axios.put('api/Categorias/DesactivarCategoria/'+this.adId,{}).then(function(response){
+      let header={"Authorization" : "Bearer " + this.$store.state.token};
+      let configuracion = {headers : header};
+        axios.put('api/Categorias/DesactivarCategoria/'+this.adId,{}, configuracion).then(function(response){
           me.adModal=0;
           me.adAccion=0;
           me.adNombre="";

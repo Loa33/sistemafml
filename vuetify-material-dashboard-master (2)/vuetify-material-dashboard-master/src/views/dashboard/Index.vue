@@ -12,6 +12,7 @@
 export default {
   name: "DashboardIndex",
 
+  
   components: {
     DashboardCoreAppBar: () => import("./components/core/AppBar"),
     DashboardCoreDrawer: () => import("./components/core/Drawer"),

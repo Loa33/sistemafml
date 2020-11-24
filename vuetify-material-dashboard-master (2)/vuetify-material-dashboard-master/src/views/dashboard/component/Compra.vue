@@ -11,55 +11,66 @@
           </template>
 
           <v-row>
-            <v-col cols="9">
-                <v-text-field v-if="verNuevo==0" class="text-xs-center" v-model="search" append-icon="mdi-magnify" label="Búsqueda" single-line hide-details></v-text-field>
-            </v-col>
-            <v-col >
-                <v-btn v-if="verNuevo==0" @click="listar()" color="primary" dark class="mb-2">Buscar</v-btn>
+            <v-col align="right">
+                <v-text-field v-if="verNuevo==0"
+                class="text-xs-center"
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Búsqueda"
+                single-line
+                hide-details
+            ></v-text-field>
             </v-col>
             <v-col align="right">
                 <v-btn v-if="verNuevo==0" @click="mostrarNuevo" color="primary" dark class="mb-2">Nuevo</v-btn>
             </v-col>
           </v-row>
               
-              <v-dialog v-model="verArticulos" max-width="1000px">
+              <v-dialog v-model="verProductos" max-width="1000px">
                         <v-card>
                             <v-card-title>
-                                <span class="headline">Seleccione un artículo</span>
+                                <span class="headline">Seleccione un producto</span>
                             </v-card-title>
                             <v-card-text>
                                 <v-container grid-list-md>
                                     <v-layout wrap>
                                         <v-flex xs12 sm12 md12 lg12 xl12>
-                                            <v-text-field append-icon="mdi-magnify" 
-                                            class="text-xs-center" v-model="texto"
-                                            label="Ingrese artículo a buscar" @keyup.enter="listarArticulo()">
-
-                                            </v-text-field>
+                                            <v-text-field
+                                                class="text-xs-center"
+                                                v-model="searchProductos"
+                                                append-icon="mdi-magnify"
+                                                label="Búsqueda"
+                                                single-line
+                                                hide-details
+                                            ></v-text-field>
                                             <template>
                                                <v-data-table
-                                                    :headers="cabeceraArticulos"
-                                                    :items="articulos"
+                                                    :headers="cabeceraProductos"
+                                                    :items="productos" 
+                                                    :search="searchProductos"
                                                     class="elevation-1"
                                                 >
-                                                    <template slot="items" slot-scope="props">
-                                                        <td class="justify-center layout px-0">
-                                                            <v-icon
+                                                    <template v-slot:[`item.seleccionar`]="{ item }">
+                                                        <v-icon
                                                             small
                                                             class="mr-2"
-                                                            @click="agregarDetalle(props.item)"
+                                                            color="green"
+                                                            @click="agregarDetalle(item)"
                                                             >
-                                                            add
-                                                            </v-icon>
+                                                            mdi-plus-circle
+                                                        </v-icon>
+                                                    </template>
+                                                    <template slot="items" slot-scope="props">
+                                                        <td class="justify-center layout px-0">
                                                         </td>
-                                                        <td>{{ props.item.nombre }}</td>
+                                                        <td>{{props.item.nombre }}</td>
                                                         <td>{{props.item.categoria}}</td>
                                                         <td>{{props.item.descripcion}}</td>
                                                         <td>{{props.item.stock}}</td>
-                                                        <td>{{props.item.precio_venta}}</td>
+                                                        <td>{{props.item.precioVenta}}</td>
                                                     </template>
                                                     <template slot="no-data">
-                                                        <h3>No hay artículos para mostrar.</h3>
+                                                        <h3>No hay productos para mostrar.</h3>
                                                     </template>
                                                 </v-data-table> 
                                             </template>
@@ -69,15 +80,15 @@
                             </v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn @click="ocultarArticulos()" color="blue darken" flat>
-                                    Cancelar
+                                <v-btn @click="ocultarProductos()" color="blue darken" >
+                                    Cerrar
                                 </v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
                     <v-dialog v-model="adModal" max-width="290">
                         <v-card>
-                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Item?</v-card-title>
+                            <v-card-title class="headline" v-if="adAccion==1">¿Activar Compra?</v-card-title>
                             <v-card-title class="headline" v-if="adAccion==2">¿Anular Compra?</v-card-title>
                             <v-card-text>
                                 Estás a punto de 
@@ -102,71 +113,69 @@
                     </v-dialog>
           <v-data-table
                 :headers="headers"
-                :items="ingresos"
+                :items="compras" 
                 :search="search"
                 class="elevation-1"
                 v-if="verNuevo==0"
             >
                 <template slot="items" slot-scope="props">
-                    <td class="justify-center layout px-0">
-                        <v-icon
-                        small
-                        class="mr-2"
-                        @click="verDetalles(props.item)"
-                        >
-                        tab
-                        </v-icon>
-                        <template v-if="props.item.estado=='Aceptado'">
-                            <v-icon
-                            small
-                            @click="activarDesactivarMostrar(2,props.item)"
-                            >
-                            block
-                            </v-icon>
-                        </template>
-                    </td>
+                    
                     <td>{{ props.item.usuario }}</td>
                     <td>{{ props.item.proveedor}}</td>
-                    <td>{{ props.item.tipo_comprobante }}</td>
-                    <td>{{ props.item.serie_comprobante }}</td>
-                    <td>{{ props.item.num_comprobante }}</td>
-                    <td>{{ props.item.fecha_hora }}</td>
-                    <td>{{ props.item.impuesto }}</td>
+                    <td>{{ props.item.serieComprobante }}</td>
+                    <td>{{ props.item.numeroComprobante }}</td>
+                    <td>{{ props.item.fecha }}</td>
+                    <td>{{ props.item.igv }}</td>
                     <td>{{ props.item.total }}</td>
                     <td>
                         <div v-if="props.item.estado=='Aceptado'">
                             <span class="blue--text">Aceptado</span>
                         </div>
-                        <div v-else>
+                        <div v- else>
                             <span class="red--text">{{props.item.estado}}</span>
                         </div>
                     </td>
                 </template>
+                <template v-slot:[`item.opciones`]="{ item }">
+                        <v-icon
+                        small
+                        class="mr-2"
+                        color="teal"
+                        @click="verDetalles(item)"
+                        >
+                        mdi-dots-horizontal
+                        </v-icon>
+                        <template v-if="item.estado=='Aceptado'">
+                            <v-icon
+                            color="red"
+                            small
+                            @click="activarDesactivarMostrar(2,item)"
+                            >
+                            mdi-toggle-switch
+                            </v-icon>
+                        </template>
+                </template>
+                
                 <template slot="no-data">
                 </template>
             </v-data-table>
             <v-container grid-list-sm class="pa-4 white" v-if="verNuevo">
                 <v-layout row wrap>
                     <v-flex xs12 sm4 md4 lg4 xl4>
-                        <v-select v-model="tipo_comprobante" 
-                        :items="comprobantes" label="Tipo Comprobante">
-                        </v-select>
-                    </v-flex>
-                    <v-flex xs12 sm4 md4 lg4 xl4>
-                        <v-text-field v-model="serie_comprobante" label="Serie Comprobante">
+                        <v-text-field v-model="serieComprobante" label="Serie Comprobante">
                         </v-text-field>
                     </v-flex>
                     <v-flex xs12 sm4 md4 lg4 xl4>
-                        <v-text-field v-model="num_comprobante" label="Número Comprobante">
+                        <v-text-field v-model="numeroComprobante" label="Número Comprobante">
                         </v-text-field>
                     </v-flex>
                     <v-flex xs12 sm8 md8 lg8 xl8>
-                        <v-select v-model="idproveedor"
+                        <v-select v-model="idProveedor"
                         :items="proveedores" label="Proveedor">
                         </v-select>
                     </v-flex>
                     <v-flex xs12 sm4 md4 lg4 xl4>
-                        <v-text-field type="number" v-model="impuesto" label="Igv">
+                        <v-text-field type="number" v-model="igv" label="Igv">
                         </v-text-field>
                     </v-flex>
                     <v-flex xs12 sm8 md8 lg8 xl8>
@@ -174,13 +183,9 @@
                         </v-text-field>
                     </v-flex>
                     <v-flex xs12 sm2 md2 lg2 xl2>
-                        <v-btn @click="mostrarArticulos()" small fab dark color="teal">
+                        <v-btn @click="mostrarProductos()" small fab dark color="teal">
                             <v-icon dark>mdi-format-list-bulleted</v-icon>
                         </v-btn>
-                    </v-flex>
-                    <v-flex xs12 sm2 md2 lg2 xl2 v-if="errorArticulo">
-                        <div class="red--text" v-text="errorArticulo">
-                        </div>
                     </v-flex>
                     <v-flex xs12 sm12 md12 lg12 xl12>
                         <v-data-table
@@ -189,41 +194,43 @@
                             hide-actions
                             class="elevation-1"
                         >
-                            <template slot="items" slot-scope="props">
-                                <td class="justify-center layout px-0">
-                                    <v-icon
+                            <template v-slot:[`item.borrar`]="{ item }">
+                                <v-icon
                                     small
                                     class="mr-2"
-                                    @click="eliminarDetalle(detalles,props.item)"
+                                    @click="eliminarDetalle(detalles,item)"
                                     >
-                                    delete
+                                    mdi-delete
                                     </v-icon>
-                                </td>
-                                <td>{{ props.item.articulo }}</td>
-                                <td><v-text-field type="number" v-model="props.item.cantidad"></v-text-field></td>
-                                <td><v-text-field type="number" v-model="props.item.precio"></v-text-field></td>
-                                <td>$ {{ props.item.cantidad * props.item.precio}}</td>
+                            </template>
+                            <template v-slot:[`item.producto`]="{ item }">
+                                <td>{{item.producto}}</td>
+                            </template>
+                            <template v-slot:[`item.cantidad`]="{ item }">
+                                <td><v-text-field type="number" v-model="item.cantidad"></v-text-field></td>
+                            </template>
+                            <template v-slot:[`item.precio`]="{ item }">
+                                <td><v-text-field type="number" v-model="item.precio"></v-text-field></td>
+                            </template>
+                            <template v-slot:[`item.subtotal`]="{ item }">
+                                <td>S/. {{ (item.cantidad * item.precio).toFixed(2)}}</td>
                             </template>
                             <template slot="no-data">
-                                <h3>No hay artículos agregados al detalle.</h3>
+                                <h3>No hay productos agregados al detalle.</h3>
                             </template>
                         </v-data-table>
                         <v-col align="right" style="padding-top: 4px;padding-bottom: 0px;">
-                            <strong>Total Parcial: </strong>$ {{totalParcial=(total-totalImpuesto).toFixed(2)}}
+                            <strong>Total Parcial: </strong>S/. {{totalParcial=(total-totalIgv).toFixed(2)}}
                         </v-col>
                         <v-col align="right" style="padding-top: 0px;padding-bottom: 0px;">
-                            <strong>Igv: </strong>$ {{totalImpuesto=((total*impuesto)/(100+impuesto)).toFixed(2)}}
+                            <strong>Igv     :    </strong>S/. {{totalIgv=((total*igv)/(100+igv)).toFixed(2)}}
                         </v-col>
                         <v-col align="right" style="padding-top: 0px;">
-                            <strong>Total Neto: </strong>$ {{total=(calcularTotal).toFixed(2)}}
+                            <strong>Total Neto: </strong>S/. {{total=(calcularTotal).toFixed(2)}}
                         </v-col>
                     </v-flex>
                     <v-flex xs12 sm12 md12 lg12 xl12>
-                        <div class="red--text" v-for="v in validaMensaje" :key="v" v-text="v">
-                        </div>
-                    </v-flex>
-                    <v-flex xs12 sm12 md12 lg12 xl12>
-                        <v-btn @click="ocultarNuevo()" color="blue darken-1" flat>Cancelar</v-btn>
+                        <v-btn @click="ocultarNuevo()" color="blue darken-1" >Cancelar</v-btn>
                         <v-btn v-if="verDet==0" @click="guardar()" color="success">Guardar</v-btn>
                     </v-flex>
 		        </v-layout>
@@ -239,56 +246,54 @@
     export default {
         data(){
             return {
-                ingresos:[],                
+                compras:[],                
                 dialog: false,
                 headers: [
-                    { text: 'Opciones', value: 'opciones', sortable: false },
                     { text: 'Usuario', value: 'usuario' },
                     { text: 'Proveedor', value: 'proveedor' },
-                    { text: 'Tipo Comprobante', value: 'tipo_comprobante' },
-                    { text: 'Serie Comprobante', value: 'serie_comprobante', sortable: false  },
-                    { text: 'Número Comprobante', value: 'num_comprobante', sortable: false  },
-                    { text: 'Fecha', value: 'fecha_hora', sortable: false  },
-                    { text: 'Impuesto', value: 'impuesto', sortable: false  },
+                    { text: 'Serie Comprobante', value: 'serieComprobante', sortable: false  },
+                    { text: 'Número Comprobante', value: 'numeroComprobante', sortable: false  },
+                    { text: 'Fecha', value: 'fecha', sortable: false  },
+                    { text: 'Igv', value: 'igv', sortable: false  },
                     { text: 'Total', value: 'total', sortable: false  },
-                    { text: 'Estado', value: 'estado', sortable: false  }                
+                    { text: 'Estado', value: 'estado', sortable: false  },
+                    { text: 'Opciones', value: 'opciones', sortable: false },                
                 ],
                 cabeceraDetalles: [
                     { text: 'Borrar', value: 'borrar', sortable: false },
-                    { text: 'Artículo', value: 'articulo', sortable: false },
+                    { text: 'Producto', value: 'producto', sortable: false },
                     { text: 'Cantidad', value: 'cantidad', sortable: false  },
                     { text: 'Precio', value: 'precio', sortable: false  },
                     { text: 'Subtotal', value: 'subtotal', sortable: false  }                
                 ],
-                detalles:[                    
+                detalles:[
                 ],
                 search: '',
+                searchProductos: '',
                 id: '',
-                idproveedor:'',
+                idProveedor:'',
                 proveedores:[                   
                 ],
-                tipo_comprobante: '',
-                comprobantes: ['FACTURA','BOLETA','TICKET','GUIA'],
-                serie_comprobante: '',
-                num_comprobante: '',
-                impuesto: 18,
+                serieComprobante: '',
+                numeroComprobante: '',
+                igv: 18,
                 codigo:'',
                 verNuevo:0,
-                errorArticulo:null,
                 totalParcial:0,
-                totalImpuesto:0,
+                totalIgv:0,
                 total:0,
-                cabeceraArticulos: [
+                productos:[],
+                cabeceraProductos: [
                     {text: 'Seleccionar', value: 'seleccionar', sortable: false },
-                    { text: 'Artículo', value: 'articulo'},
+                    { text: 'Producto', value: 'producto'},
+                    { text: 'Codigo', value: 'codigo'},
                     { text: 'Categoría', value: 'categoria' },
-                    { text: 'Descripción', value: 'descripcion', sortable: false },
+                    { text: 'Descripción', value: 'descripcion' },
                     { text: 'Stock', value: 'stock', sortable: false  },
-                    { text: 'Precio Venta', value: 'precio_venta', sortable: false  }            
+                    { text: 'Precio Venta', value: 'precioVenta'  }            
                 ],
-                articulos:[],
                 texto:'',
-                verArticulos:0,
+                verProductos:0,
                 verDet: 0,
                 valida: 0,
                 validaMensaje:[],
@@ -317,6 +322,7 @@
         created () {
             this.listar();
             this.select();
+            this.listarProducto();
         },
         methods:{
             mostrarNuevo(){
@@ -328,54 +334,48 @@
             },
             buscarCodigo(){
                 let me=this;
-                me.errorArticulo=null;
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.get('api/Articulos/BuscarCodigoIngreso/'+this.codigo,configuracion)
+                axios.get('api/Productos/BuscarPorCodigo/'+this.codigo,configuracion)
                 .then(function(response){
-                    //console.log(response);
                     me.agregarDetalle(response.data);
                 }).catch(function(error){
-                    console.log(error);
-                    me.errorArticulo='No existe el artículo';
+                    me.$swal('El producto no existe');
                 });
             },
-            listarArticulo(){
+            listarProducto(){
                 let me=this;
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.get('api/Articulos/ListarIngreso/'+me.texto,configuracion).then(function(response){
-                    //console.log(response);
-                    me.articulos=response.data;
+                axios.get('api/Productos/Listar',configuracion).then(function(response){
+                    me.productos=response.data;
                 }).catch(function(error){
                     console.log(error);
                 });
             },
-            mostrarArticulos(){
-                this.verArticulos=1;
+            mostrarProductos(){
+                this.verProductos=1;
             },
-            ocultarArticulos(){
-                this.verArticulos=0;
+            ocultarProductos(){
+                this.verProductos=0;
             },
             agregarDetalle(data = []){
-                this.errorArticulo=null;
-                if (this.encuentra(data['idarticulo'])){
-                    this.errorArticulo="El artículo ya ha sido agregado."
+                if(this.encuentra(data['idProducto'])){
+                    this.$swal('El producto ya ha sido agregado');
                 }
                 else{
                     this.detalles.push(
-                        {idarticulo:data['idarticulo'],
-                        articulo: data['nombre'],
+                        {idProducto:data['idProducto'],
+                        producto: data['nombre'],
                         cantidad:1,
                         precio:1}
                     );
                 }
-                
             },
             encuentra(id){
                 var sw=0;
                 for(var i=0;i<this.detalles.length;i++){
-                    if (this.detalles[i].idarticulo==id){
+                    if (this.detalles[i].idProducto==id){
                         sw=1;
                     }
                 }
@@ -391,16 +391,9 @@
                 let me=this;
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                let url='';
-                if (!me.search){
-                    url='api/Ingresos/Listar';
-                }
-                else{
-                    url='api/Ingresos/ListarFiltro/'+me.search;
-                }
-                axios.get(url,configuracion).then(function(response){
+                axios.get('api/Compras/Listar',configuracion).then(function(response){
                     //console.log(response);
-                    me.ingresos=response.data;
+                    me.compras=response.data;
                 }).catch(function(error){
                     console.log(error);
                 });
@@ -409,8 +402,7 @@
                 let me=this;
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.get('api/Ingresos/ListarDetalles/'+id,configuracion).then(function(response){
-                    //console.log(response);
+                axios.get('api/Compras/ListarDetalles/'+id,configuracion).then(function(response){
                     me.detalles=response.data;
                 }).catch(function(error){
                     console.log(error);
@@ -418,12 +410,11 @@
             },
             verDetalles(item){
                 this.limpiar();
-                this.tipo_comprobante=item.tipo_comprobante;
-                this.serie_comprobante=item.serie_comprobante;
-                this.num_comprobante=item.num_comprobante;
-                this.idproveedor=item.idproveedor;
-                this.impuesto=item.impuesto;
-                this.listarDetalles(item.idingreso);
+                this.serieComprobante=item.serieComprobante;
+                this.numeroComprobante=item.numeroComprobante;
+                this.idProveedor=item.idProveedor;
+                this.igv=item.igv;
+                this.listarDetalles(item.idCompra);
                 this.verNuevo=1;
                 this.verDet=1;
             },
@@ -432,10 +423,10 @@
                 var proveedoresArray=[];
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.get('api/Personas/SelectProveedores',configuracion).then(function(response){
+                axios.get('api/Proveedores/SelectProveedores',configuracion).then(function(response){
                     proveedoresArray=response.data;
                     proveedoresArray.map(function(x){
-                        me.proveedores.push({text: x.nombre,value:x.idpersona});
+                        me.proveedores.push({text: x.nombre,value:x.idProveedor});
                     });
                 }).catch(function(error){
                     console.log(error);
@@ -443,11 +434,10 @@
             },
             limpiar(){
                 this.id="";
-                this.idproveedor="";
-                this.tipo_comprobante="";
-                this.serie_comprobante="";
-                this.num_comprobante="";
-                this.impuesto="18";
+                this.idProveedor="";
+                this.serieComprobante="";
+                this.numeroComprobante="";
+                this.igv="18";
                 this.codigo="";
                 this.detalles=[];
                 this.total=0;
@@ -456,19 +446,15 @@
                 this.verDet=0;
             },
             guardar () {
-                if (this.validar()){
-                    return;
-                }
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};                
                 let me=this;
-                axios.post('api/Ingresos/Crear',{
-                    'idproveedor':me.idproveedor,
-                    'idusuario':me.$store.state.usuario.idusuario,
-                    'tipo_comprobante': me.tipo_comprobante,
-                    'serie_comprobante': me.serie_comprobante,
-                    'num_comprobante':me.num_comprobante,
-                    'impuesto': me.impuesto,
+                axios.post('api/Compras/Crear',{
+                    'idProveedor':me.idProveedor,
+                    'idUsuario':me.$store.state.usuario.idUsuario,
+                    'serieComprobante': me.serieComprobante,
+                    'numeroComprobante':me.numeroComprobante,
+                    'igv': me.igv,
                     'total':me.total,
                     'detalles':me.detalles
                 },configuracion).then(function(response){
@@ -479,34 +465,10 @@
                     console.log(error);
                 });
             },
-            validar(){
-                this.valida=0;
-                this.validaMensaje=[];
-
-                if (!this.idproveedor){
-                    this.validaMensaje.push("Seleccione un proveedor.");
-                }
-                if (!this.tipo_comprobante){
-                    this.validaMensaje.push("Seleccione un tipo de comprobante.");
-                }
-                if (!this.num_comprobante){
-                    this.validaMensaje.push("Ingrese el número del comprobante.");
-                }
-                if (!this.impuesto || this.impuesto<0){
-                    this.validaMensaje.push("Ingrese un impuesto válido.");
-                }
-                if (this.detalles.length<=0){
-                    this.validaMensaje.push("Ingrese al menos un artículo al detalle.");
-                }
-                if (this.validaMensaje.length){
-                    this.valida=1;
-                }
-                return this.valida;
-            },
             activarDesactivarMostrar(accion,item){
                 this.adModal=1;
-                this.adNombre=item.num_comprobante;
-                this.adId=item.idingreso;                
+                this.adNombre=item.numeroComprobante;
+                this.adId=item.idCompra;                
                 if (accion==1){
                     this.adAccion=1;
                 }
@@ -520,27 +482,11 @@
             activarDesactivarCerrar(){
                 this.adModal=0;
             },
-            /*
-            activar(){
-                let me=this;
-                let header={"Authorization" : "Bearer " + this.$store.state.token};
-                let configuracion= {headers : header};
-                axios.put('api/Usuarios/Activar/'+this.adId,{},configuracion).then(function(response){
-                    me.adModal=0;
-                    me.adAccion=0;
-                    me.adNombre="";
-                    me.adId="";
-                    me.listar();                       
-                }).catch(function(error){
-                    console.log(error);
-                });
-            },
-            */
             desactivar(){
                 let me=this;
                 let header={"Authorization" : "Bearer " + this.$store.state.token};
                 let configuracion= {headers : header};
-                axios.put('api/Ingresos/Anular/'+this.adId,{},configuracion).then(function(response){
+                axios.put('api/Compras/Anular/'+this.adId,{},configuracion).then(function(response){
                     me.adModal=0;
                     me.adAccion=0;
                     me.adNombre="";

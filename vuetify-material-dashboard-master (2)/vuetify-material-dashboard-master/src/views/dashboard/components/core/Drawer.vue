@@ -2,6 +2,7 @@
   <v-navigation-drawer
     id="core-navigation-drawer"
     v-model="drawer"
+    v-if="logueado"
     :dark="barColor !== 'rgba(228, 226, 226, 1), rgba(255, 255, 255, 0.7)'"
     :expand-on-hover="expandOnHover"
     :right="$vuetify.rtl"
@@ -24,19 +25,44 @@
     <v-divider class="mb-2" />
 
     <v-list expand nav>
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
 
-      <template v-for="(item, i) in computedItems">
-        <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
+      <ul v-for="(item, i) in computedItems" :key="i">
+        <div v-if="((i==0) && (esAdministrador || esAlmacenero || esFarmaceutica))">
+            <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
           <!--  -->
         </base-item-group>
-
         <base-item v-else :key="`item-${i}`" :item="item" />
-      </template>
-
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
+        </div>
+         <div v-if="((i==1) && (esAdministrador || esAlmacenero || esFarmaceutica))">
+            <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
+          <!--  -->
+            </base-item-group>
+        </div>
+         <div v-if="((i==2) && (esAdministrador || esAlmacenero))">
+            <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
+          <!--  -->
+        </base-item-group>
+        <base-item v-else :key="`item-${i}`" :item="item" />
+        </div>
+         <div v-if="((i==3 ) && (esAdministrador || esAlmacenero))">
+            <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
+          <!--  -->
+        </base-item-group>
+        <base-item v-else :key="`item-${i}`" :item="item" />
+        </div>
+         <div v-if="((i==4 ) && (esAdministrador))">
+            <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
+          <!--  -->
+        </base-item-group>
+        <base-item v-else :key="`item-${i}`" :item="item" />
+        </div>
+         <div v-if="((i==5) && (esAdministrador || esFarmaceutica))">
+            <base-item-group v-if="item.children" :key="`group-${i}`" :item="item">
+          <!--  -->
+        </base-item-group>
+        <base-item v-else :key="`item-${i}`" :item="item" />
+        </div>
+      </ul>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -128,12 +154,21 @@ export default {
     computedItems() {
       return this.items.map(this.mapItem);
     },
-    profile() {
-      return {
-        avatar: true,
-        title: this.$t("avatar"),
-      };
+    logueado(){
+      return this.$store.state.usuario;
     },
+    esAdministrador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Administrador'
+    },
+    esAlmacenero(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Jefe de Almacén'
+    },
+    esFarmaceutica(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Farmaceútica'
+    }
+  },
+  created(){
+    this.$store.dispatch('autoLogin');
   },
 
   methods: {
@@ -143,7 +178,7 @@ export default {
         children: item.children ? item.children.map(this.mapItem) : undefined,
         title: this.$t(item.title),
       };
-    },
+    }
   },
 };
 </script>

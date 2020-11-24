@@ -36,11 +36,13 @@ export default{
   data(){
     return {
       email:'',
-      password: ''
+      password: '',
+      error: null
     }
   },
   methods :{
     ingresar(){
+      this.error = null;
         axios.post('api/Usuarios/Login', {email: this.email, password:this.password})
         .then(respuesta => {
           return respuesta.data
@@ -50,6 +52,13 @@ export default{
           this.$router.push({name: "Dashboard"})
         })
         .catch(err => {
+          if(err.response.status ==400){
+            this.error ="El email no es válido"
+          } else if(err.response.status ==404){
+            this.error = "Los datos no son válidos"
+          }else{
+            this.error = "No se puede acceder"
+          }
           console.log(err)
         })
     }

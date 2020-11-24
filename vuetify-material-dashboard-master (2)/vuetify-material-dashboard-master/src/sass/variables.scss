@@ -1,3 +1,7 @@
+@import '~sweetalert2/src/variables';
+$swal2-font: sans-serif !important;
+@import '~sweetalert2/src/sweetalert2';
+
 $font-size-root: 14px;
 $sheet-border-radius: 4px;
 $list-item-title-font-size: 0.929rem;
@@ -9,6 +13,7 @@ $btn-sizes: ( default: 41, large: 54 );
 $btn-letter-spacing: 0;
 $btn-font-weight: 400;
 $card-text-font-size: 16px;
+
 
 $headings: (
   'h1': (

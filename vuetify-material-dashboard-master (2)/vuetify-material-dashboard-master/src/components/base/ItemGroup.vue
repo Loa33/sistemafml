@@ -27,8 +27,9 @@
       </v-list-item-content>
     </template>
 
-    <template v-for="(child, i) in children">
-      <base-item-sub-group
+    <ul v-for="(child, i) in children" :key="child">
+      <div v-if="child.title=='Categorias' && (esAlmacenero || esAdministrador)">
+        <base-item-sub-group
         v-if="child.children"
         :key="`sub-group-${i}`"
         :item="child"
@@ -40,7 +41,25 @@
         :item="child"
         text
       />
-    </template>
+
+      </div>
+      <div v-if='child.title!="Categorias"'>
+        <base-item-sub-group
+        v-if="child.children "
+        :key="`sub-group-${i}`"
+        :item="child"
+      />
+
+      <base-item
+        v-else
+        :key="`item-${i}`"
+        :item="child"
+        text
+      />
+
+      </div>
+      
+    </ul>
   </v-list-group>
 </template>
 
@@ -96,6 +115,15 @@
       group () {
         return this.genGroup(this.item.children)
       },
+      esAdministrador(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Administrador'
+    },
+    esAlmacenero(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Jefe de Almacén'
+    },
+    esFarmaceutica(){
+      return this.$store.state.usuario && this.$store.state.usuario.rol == 'Farmaceútica'
+    }
     },
 
     methods: {
