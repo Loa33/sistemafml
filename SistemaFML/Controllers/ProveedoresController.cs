@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
 using Web.Models.Proveedor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles = "Jefe de Almacén, Administrador")]
     [Route("api/[controller]")]
     [ApiController]
     public class ProveedoresController : ControllerBase
@@ -41,7 +43,18 @@ namespace Web.Controllers
 
         }
 
-        
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<SelectViewModel>> SelectProveedores()
+        {
+            var proveedor = await _context.Proveedores.ToListAsync();
+
+            return proveedor.Select(p => new SelectViewModel
+            {
+                IdProveedor = p.IdProveedor,
+                Nombre = p.Nombre,
+            });
+
+        }
 
         // POST: api/Proveedors/Crear
         [HttpPost("[action]")]

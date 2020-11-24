@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
 using Web.Models.Rol;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     [Route("api/[controller]")]
     [ApiController]
     public class RolesController : ControllerBase

@@ -10,6 +10,7 @@ using Entidades;
 using Web.Models;
 using Web.Models.Categoria;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SistemaFML.Controllers
 {
@@ -26,6 +27,7 @@ namespace SistemaFML.Controllers
         }
 
         // GET: api/Categorias/ListarCategorias
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpGet("[action]")]
         public async Task <IEnumerable<CategoriaViewModel>> ListarCategorias()
         {
@@ -40,6 +42,7 @@ namespace SistemaFML.Controllers
         }
 
         // GET: api/Categorias/Mostrart/1
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> Mostrar([FromRoute] int id)
         {
@@ -59,6 +62,7 @@ namespace SistemaFML.Controllers
         }
 
         // PUT: api/Categorias/ActualizarCategoria
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpPut("[action]")]
         public async Task<IActionResult> ActualizarCategoria([FromBody] CategoriaViewModel model)
         {
@@ -95,6 +99,7 @@ namespace SistemaFML.Controllers
         }
 
         // POST: api/Categorias/CrearCategoria
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [EnableCors("Todos")]
         [HttpPost("[action]")]
         public async Task<IActionResult> CrearCategoria([FromBody] CategoriaViewModel model)
@@ -126,6 +131,7 @@ namespace SistemaFML.Controllers
         }
 
         // DELETE: api/Categorias/Eliminar/1
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> EliminarCategoria([FromRoute] int id)
         {
@@ -159,6 +165,7 @@ namespace SistemaFML.Controllers
         }
 
         // PUT: api/Categorias/DesactivarCategoria/1
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> DesactivarCategoria([FromRoute] int id)
         {
@@ -200,6 +207,7 @@ namespace SistemaFML.Controllers
 
         }
 
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         // PUT: api/Categorias/ActivarCategoria/1
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> ActivarCategoria([FromRoute] int id)

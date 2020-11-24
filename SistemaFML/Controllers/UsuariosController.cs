@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -30,6 +31,7 @@ namespace Web.Controllers
         }
 
         // GET: api/Productos/Listar
+        [Authorize(Roles = "Administrador")]
         [HttpGet("[action]")]
         public async Task<IEnumerable<UsuarioViewModel>> Listar()
         {
@@ -49,6 +51,7 @@ namespace Web.Controllers
 
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPost("[action]")]
         public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
@@ -89,6 +92,7 @@ namespace Web.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPut("[action]")]
         public async Task<IActionResult> Actualizar([FromBody] EditarViewModel model)
         {
@@ -144,6 +148,7 @@ namespace Web.Controllers
         }
 
         // PUT: api/Usuarios/Desactivar/1
+        [Authorize(Roles = "Administrador")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Desactivar([FromRoute] int id)
         {
@@ -176,6 +181,7 @@ namespace Web.Controllers
         }
 
         // PUT: api/Usuarios/Activar/1
+        [Authorize(Roles = "Administrador")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Activar([FromRoute] int id)
         {

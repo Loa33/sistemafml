@@ -21,7 +21,7 @@ namespace Web.Models.Compra
         [Required]
         public decimal Total { get; set; }
         [Required]
-        public List<DetalleViewModel> detalles { get; set; }
+        public List<DetalleViewModel> Detalles { get; set; }
 
     }
 }

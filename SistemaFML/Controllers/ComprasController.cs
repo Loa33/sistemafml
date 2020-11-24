@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
 using Web.Models.Compra;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
@@ -23,6 +24,7 @@ namespace Web.Controllers
         }
 
         // GET: api/Compras/Listar
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpGet("[action]")]
         public async Task<IEnumerable<CompraViewModel>> Listar()
         {
@@ -49,95 +51,111 @@ namespace Web.Controllers
             });
         }
 
-        // GET: api/Compras/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetCompra([FromRoute] int id)
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
+        [HttpGet("[action]/{idCompra}")]
+        public async Task<IEnumerable<DetalleViewModel>> ListarDetalles([FromRoute] int idCompra)
         {
-            if (!ModelState.IsValid)
+            var detalle = await _context.DetalleCompras
+                .Include(p => p.Producto)
+                .Where(d => d.IdCompra==idCompra)
+                .ToListAsync();
+
+            return detalle.Select(d => new DetalleViewModel
             {
-                return BadRequest(ModelState);
-            }
-
-            var compra = await _context.Compras.FindAsync(id);
-
-            if (compra == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(compra);
+                IdProducto = d.IdProducto,
+                Producto = d.Producto.Nombre,
+                Cantidad = d.Cantidad,
+                Precio = d.Precio
+            });
         }
 
-        // PUT: api/Compras/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCompra([FromRoute] int id, [FromBody] Compra compra)
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var fecha = DateTime.Now;
+            Compra compra = new Compra
+            {
+                IdProveedor = model.IdProveedor,
+                IdUsuario = model.IdUsuario,
+                SerieComprobante = model.SerieComprobante,
+                NumeroComprobante = model.NumeroComprobante,
+                Fecha = fecha,
+                Igv = model.Igv,
+                Total = model.Total,
+                Estado = "Aceptado"
+            };
 
-            if (id != compra.IdCompra)
+            try
+            {
+                _context.Compras.Add(compra);
+                await _context.SaveChangesAsync();
+                var idCompra = compra.IdCompra;
+                foreach (var det in model.Detalles)
+                {
+                    DetalleCompra detalle = new DetalleCompra
+                    {
+                        IdCompra = idCompra,
+                        IdProducto = det.IdProducto,
+                        Cantidad = det.Cantidad,
+                        Precio = det.Precio
+                    };
+                    _context.DetalleCompras.Add(detalle);
+                }
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            return Ok();
+        }
+
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
+        [HttpPut("[action]/{id}")]
+        public async Task<IActionResult> Anular([FromRoute] int id)
+        {
+            if(id<=0)
             {
                 return BadRequest();
             }
 
-            _context.Entry(compra).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CompraExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Compras
-        [HttpPost]
-        public async Task<IActionResult> PostCompra([FromBody] Compra compra)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            _context.Compras.Add(compra);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCompra", new { id = compra.IdCompra }, compra);
-        }
-
-        // DELETE: api/Compras/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCompra([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var compra = await _context.Compras.FindAsync(id);
-            if (compra == null)
+            var compra = await _context.Compras.FirstOrDefaultAsync(c => c.IdCompra == id);
+            if(compra == null)
             {
                 return NotFound();
             }
 
-            _context.Compras.Remove(compra);
-            await _context.SaveChangesAsync();
+            compra.Estado = "Anulado";
 
-            return Ok(compra);
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                var detalle = await _context.DetalleCompras.Include(p => p.Producto)
+                    .Where(d => d.IdCompra == id)
+                    .ToListAsync();
+                foreach(var det in detalle)
+                {
+                    var producto = await _context.Productos.FirstOrDefaultAsync(p => p.IdProducto == det.Producto.IdProducto);
+                    producto.Stock = det.Producto.Stock = det.Cantidad;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
+
+
+
 
         private bool CompraExists(int id)
         {

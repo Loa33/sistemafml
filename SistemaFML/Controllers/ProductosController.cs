@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using Datos;
 using Entidades;
 using Web.Models.Producto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Web.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ProductosController : ControllerBase
@@ -22,11 +24,37 @@ namespace Web.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Jefe de Almacén, Administrador, Farmaceútica")]
         // GET: api/Productos/Listar
         [HttpGet("[action]")]
         public async Task<IEnumerable<ProductoViewModel>> Listar()
         {
             var producto = await _context.Productos.Include(a => a.Categoria).ToListAsync();
+
+            return producto.Select(a => new ProductoViewModel
+            {
+                IdProducto = a.IdProducto,
+                IdCategoria = a.IdCategoria,
+                Categoria = a.Categoria.Nombre,
+                Codigo = a.Codigo,
+                Nombre = a.Nombre,
+                Stock = a.Stock,
+                PrecioVenta = a.PrecioVenta,
+                Descripcion = a.Descripcion,
+                Estado = a.Estado
+            });
+
+        }
+
+
+        [Authorize(Roles = "Jefe de Almacén, Administrador, Farmaceútica")]
+        [HttpGet("[action]/{texto}")]
+        public async Task<IEnumerable<ProductoViewModel>> ListarCompra([FromRoute] string texto)
+        {
+            var producto = await _context.Productos.Include(p => p.Categoria)
+                .Where(p => p.Nombre.Contains(texto))
+                .Where(p=>p.Estado==true)
+                .ToListAsync();
 
             return producto.Select(a => new ProductoViewModel
             {
@@ -70,7 +98,34 @@ namespace Web.Controllers
             });
         }
 
+        [HttpGet("[action]/{codigo}")]
+        public async Task<IActionResult> BuscarPorCodigo([FromRoute] string codigo)
+        {
+
+            var producto = await _context.Productos.Include(a => a.Categoria).
+                SingleOrDefaultAsync(a => a.Codigo == codigo);
+
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new ProductoViewModel
+            {
+                IdProducto = producto.IdProducto,
+                IdCategoria = producto.IdCategoria,
+                Categoria = producto.Categoria.Nombre,
+                Codigo = producto.Codigo,
+                Nombre = producto.Nombre,
+                Descripcion = producto.Descripcion,
+                Stock = producto.Stock,
+                PrecioVenta = producto.PrecioVenta,
+                Estado = producto.Estado
+            });
+        }
+
         // PUT: api/Productos/Actualizar
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpPut("[action]")]
         public async Task<IActionResult> ActualizarProducto([FromBody] EditarViewModel model)
         {
@@ -112,6 +167,7 @@ namespace Web.Controllers
         }
 
         // POST: api/Productos/Crear
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpPost("[action]")]
         public async Task<IActionResult> Crear([FromBody] CrearViewModel model)
         {
@@ -145,6 +201,7 @@ namespace Web.Controllers
         }
 
         // PUT: api/Productos/Desactivar/1
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Desactivar([FromRoute] int id)
         {
@@ -177,6 +234,7 @@ namespace Web.Controllers
         }
 
         // PUT: api/Productos/Activar/1
+        [Authorize(Roles = "Jefe de Almacén, Administrador")]
         [HttpPut("[action]/{id}")]
         public async Task<IActionResult> Activar([FromRoute] int id)
         {
