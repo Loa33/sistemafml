@@ -154,9 +154,6 @@ namespace Web.Controllers
             return Ok();
         }
 
-
-
-
         private bool CompraExists(int id)
         {
             return _context.Compras.Any(e => e.IdCompra == id);

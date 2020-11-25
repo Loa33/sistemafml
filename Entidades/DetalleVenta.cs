@@ -18,7 +18,6 @@ namespace Entidades
         public decimal Precio { get; set; }
         [Required]
         public decimal Descuento { get; set; }
-
         public Venta Venta { get; set; }
         public Producto Producto { get; set; }
     }

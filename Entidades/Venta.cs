@@ -11,6 +11,8 @@ namespace Entidades
         [Required]
         public int IdUsuario { get; set; }
         [Required]
+        public string Documento { get; set; }
+        public string Nombre { get; set; }
         public string TipoComprobante { get; set; }
         public string SerieComprobante { get; set; }
         [Required]
