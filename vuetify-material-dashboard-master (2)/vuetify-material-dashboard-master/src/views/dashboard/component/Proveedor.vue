@@ -184,6 +184,7 @@ export default {
   data() {
     return {
       proveedores: [],
+      proveedoresValidar: [],
       dialog: false,
       headers: [
         { text: "Nombre", value: "nombre" },
@@ -251,6 +252,7 @@ export default {
         .then(function (response) {
           //console.log(response);
           me.proveedores = response.data;
+          me.proveedoresValidar = response.data;
         })
         .catch(function (error) {
           console.log(error);
@@ -274,17 +276,19 @@ export default {
       this.id = "";
       this.$refs.form.reset();
       this.nombre = "";
-      this.dni = "";
+      this.ruc = "";
       this.direccion = "";
       this.telefono = "";
       this.email = "";
       this.editedIndex = -1;
     },
     guardar() {
-    if (this.$refs.form.validate()) {
-      if (this.validar()) {
-        return;
+      if (this.encuentra(this.ruc)) {
+        this.$swal("El proveedor ya existe");
       }
+      else
+      {
+      if (this.$refs.form.validate()) {
       let header = { Authorization: "Bearer " + this.$store.state.token };
       let configuracion = { headers: header };
       if (this.editedIndex > -1) {
@@ -336,6 +340,17 @@ export default {
           });
       }
     }
+      }
+    
+    },
+    encuentra(ruc) {
+      var sw = 0;
+      for (var i = 0; i < this.proveedoresValidar.length; i++) {
+        if (this.proveedoresValidar[i].ruc == ruc) {
+          sw = 1;
+        }
+      }
+      return sw;
     },
     activarDesactivarMostrar(accion, item) {
       this.adModal = 1;

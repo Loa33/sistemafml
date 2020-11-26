@@ -143,6 +143,7 @@ export default {
   data() {
     return {
       categorias: [],
+      categoriasValidar: [],
       dialog: false,
       headers: [
         { text: "Nombre", value: "nombre" },
@@ -198,6 +199,7 @@ export default {
         .then(function (response) {
           //console.log(response);
           me.categorias = response.data;
+          me.categoriasValidar = response.data;
         })
         .catch(function (error) {
           console.log(error);
@@ -233,7 +235,7 @@ export default {
       this.valida=true;
     },
     guardar(){
-      if (this.$refs.form.validate()) {
+        if (this.$refs.form.validate()) {
         let header={"Authorization" : "Bearer " + this.$store.state.token};
         let configuracion = {headers : header};
         if(this.editedIndex > -1){
@@ -251,7 +253,11 @@ export default {
             }).catch(function(error){
               console.log(error);
             });
-        }else {
+        }
+        }else if (this.encuentra(this.nombre)) {
+        console.log(this.nombre);
+        this.$swal("La categoria ya existe");
+      }else {
             let me = this;
             axios.post('api/Categorias/CrearCategoria', {
               'nombre': me.nombre,
@@ -264,7 +270,16 @@ export default {
               console.log(error);
             });
         }
+      
+    },
+    encuentra(nombre) {
+      var sw = 0;
+      for (var i = 0; i < this.categoriasValidar.length; i++) {
+        if (this.categoriasValidar[i].nombre == nombre ) {
+          sw = 1;
+        }
       }
+      return sw;
     },
     validar(){
       this.valida=0;

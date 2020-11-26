@@ -74,7 +74,7 @@
                               type="number"
                               v-model="stock"
                               label="Stock"
-                              :rules="requiredRules"
+                              :rules="stockRules"
                             >
                             </v-text-field>
                           </v-flex>
@@ -214,6 +214,7 @@ export default {
   data() {
     return {
       productos: [],
+      productosValidar: [],
       dialog: false,
       headers: [
         { text: "Código", value: "codigo", sortable: false },
@@ -232,21 +233,25 @@ export default {
       categorias: [],
       codigo: "",
       nombre: "",
-      stock: 0,
-      precioVenta: 0,
+      stock: 1,
+      precioVenta: 1,
       descripcion: "",
       valida: true,
       codigoRules: [
         v => !!v || 'Debe llenar este campo',
-        v => (v && v.length >= 5 && v.length <= 10) || 'El codigo debe tener mas de 5 y menos de 10 caracteres'
+        v => (v && v.length >= 5 && v.length <= 10 && /^[a-zA-Z0-9]*$/.test(v)) || 'El codigo debe tener mas de 5 y menos de 10 caracteres'
       ],
       nombreRules: [
         v => !!v || 'Debe llenar este campo',
-        v => (v && v.length >= 5) || 'El nombre debe tener mas de 5 caracteres'
+        v => (v && v.length >= 5 && /[A-Za-z ñ]+/.test(v)) || 'El nombre debe tener mas de 5 caracteres  alfabeticos'
+      ],
+      stockRules: [
+        v => !!v || 'Debe llenar este campo',
+        v => /^[1-9]+[0-9]*$/.test(v) || 'El stock debe ser mayor a 0'
       ],
       descripcionRules: [
         v => !!v || 'Debe llenar este campo',
-        v => (v && v.length <=256) || 'La descripcion debe ser menor a 256 caracteres'
+        v => (v && v.length <=256 && v.length >=3 ) || 'La descripcion debe ser menor a 256 y mayor a 3 caracteres'
       ],
       precioRules: [
         v => !!v || 'Debe llenar este campo',
@@ -288,6 +293,7 @@ export default {
         .then(function (response) {
           //console.log(response);
           me.productos = response.data;
+          me.productosValidar= response.data;
         })
         .catch(function (error) {
           console.log(error);
@@ -332,8 +338,8 @@ export default {
       this.idCategoria = "";
       this.codigo = "";
       this.nombre = "";
-      this.stock = "";
-      this.precioVenta = "";
+      this.stock = "1";
+      this.precioVenta = "1";
       this.descripcion = "";
       this.editedIndex = -1;
       
@@ -370,7 +376,10 @@ export default {
               me.$swal("No tiene permisos para realizar esta acción");
             }
           });
-      } else {
+      } else if (this.encuentra(this.nombre, this.codigo)) {
+        console.log(this.nombre);
+        this.$swal("El producto ya existe");
+      }else {
         //Código para guardar
         let me = this;
         axios
@@ -397,7 +406,17 @@ export default {
             }
           });
       }
-    }
+      }
+      
+    },
+    encuentra(nombre, codigo) {
+      var sw = 0;
+      for (var i = 0; i < this.productosValidar.length; i++) {
+        if (this.productosValidar[i].nombre == nombre || this.productosValidar[i].codigo == codigo) {
+          sw = 1;
+        }
+      }
+      return sw;
     },
     validar() {
       this.valida = 0;

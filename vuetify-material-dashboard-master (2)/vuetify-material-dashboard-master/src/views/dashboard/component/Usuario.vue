@@ -39,19 +39,19 @@
                         <v-container grid-list-md>
                         <v-layout wrap>
                             <v-flex xs12 sm6 md6>
-                            <v-text-field v-model="nombre" label="Nombre">
+                            <v-text-field v-model="nombre" label="Nombre" :rules="requieredRules">
                             </v-text-field>
                             </v-flex>
                             <v-flex xs12 sm6 md6>
-                            <v-select v-model="idRol" :items="roles" label="Rol">
+                            <v-select v-model="idRol" :items="roles" label="Rol" :rules="requieredRules">
                             </v-select>
                             </v-flex>
                             <v-flex xs12 sm6 md6>
-                            <v-text-field v-model="dni" label="DNI">
+                            <v-text-field v-model="dni" label="DNI" :rules="dniRules">
                             </v-text-field>
                             </v-flex>
                             <v-flex xs12 sm6 md6>
-                            <v-text-field v-model="email" label="Email">
+                            <v-text-field v-model="email" label="Email" :rules="emailRules">
                             </v-text-field>
                             </v-flex>
                             <v-flex xs12 sm6 md6>
@@ -59,16 +59,9 @@
                                 type="password"
                                 v-model="password"
                                 label="Password"
+                                :rules="requieredRules"
                             >
                             </v-text-field>
-                            </v-flex>
-                            <v-flex xs12 sm12 md12 v-show="valida">
-                            <div
-                                class="red--text"
-                                v-for="v in validaMensaje"
-                                :key="v"
-                                v-text="v"
-                            ></div>
                             </v-flex>
                         </v-layout>
                         </v-container>
@@ -79,7 +72,7 @@
                         <v-btn color="blue darken-1" flat @click.native="close"
                         >Cancelar</v-btn
                         >
-                        <v-btn color="blue darken-1" flat @click.native="guardar"
+                        <v-btn color="blue darken-1" :disabled="!valida" flat @click.native="guardar"
                         >Guardar</v-btn
                         >
                     </v-card-actions>
@@ -188,6 +181,7 @@ export default {
   data() {
     return {
       usuarios: [],
+      usuariosValidar: [],
       dialog: false,
       headers: [
         { text: "Nombre", value: "nombre" },
@@ -208,12 +202,27 @@ export default {
       password: "",
       actPassword: false,
       passwordAnt: "",
-      valida: 0,
+      valida: true,
       validaMensaje: [],
       adModal: 0,
       adAccion: 0,
       adNombre: "",
       adId: "",
+      requieredRules: [
+        v => !!v || 'Debe llenar este campo',
+      ],
+      dniRules: [
+        v => !!v || 'Debe llenar este campo',
+        v => /^[0-9]{8}$/.test(v) || 'Debe ingresar un DNI válido'
+      ],
+      telefonoRules:[
+        v => !!v || 'Debe llenar este campo',
+        v => /^(?=.*[0-9])[- +()0-9]+$/.test(v) || 'Debe ingresar un teléfono válido'
+      ],
+      emailRules:[
+        v => !!v || 'Debe llenar este campo',
+        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'Debe ingresar un email válido'
+      ],
     };
   },
   computed: {
@@ -242,6 +251,7 @@ export default {
         .then(function (response) {
           //console.log(response);
           me.usuarios = response.data;
+          me.usuariosValidar = response.data;
         })
         .catch(function (error) {
           console.log(error);
@@ -281,6 +291,7 @@ export default {
     },
     limpiar() {
       this.id = "";
+      this.$refs.form.reset();
       this.idRol = "";
       this.nombre = "";
       this.dni = "";
@@ -291,14 +302,14 @@ export default {
       this.editedIndex = -1;
     },
     guardar() {
-      if (this.validar()) {
-        return;
+      if (this.encuentra(this.dni)) {
+        this.$swal("El usuario ya existe");
       }
-      let header = { Authorization: "Bearer " + this.$store.state.token };
+      else{
+        if (this.$refs.form.validate()) {
+          let header = { Authorization: "Bearer " + this.$store.state.token };
       let configuracion = { headers: header };
       if (this.editedIndex > -1) {
-        //Código para editar
-        //Código para guardar
         let me = this;
         if (me.password != me.passwordAnt) {
           me.actPassword = true;
@@ -349,6 +360,17 @@ export default {
             console.log(error);
           });
       }
+        }
+      }
+    },
+    encuentra(dni) {
+      var sw = 0;
+      for (var i = 0; i < this.usuariosValidar.length; i++) {
+        if (this.usuariosValidar[i].dni == dni) {
+          sw = 1;
+        }
+      }
+      return sw;
     },
     validar() {
       this.valida = 0;
