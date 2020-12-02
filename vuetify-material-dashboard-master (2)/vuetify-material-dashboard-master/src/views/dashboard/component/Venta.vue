@@ -218,7 +218,7 @@
                 </v-text-field>
               </v-flex>
               <v-flex xs12 sm4 md4 lg4 xl4>
-                <v-text-field v-model="documento" label="Documento cliente" :rules="documentoRules">
+                <v-text-field v-model="documento" label="Documento cliente" :rules="requiredRules">
                 </v-text-field>
               </v-flex>
               <v-flex xs12 sm4 md4 lg4 xl4>
@@ -274,6 +274,7 @@
                         <v-text-field
                           type="number"
                           v-model="item.precio"
+                          :disabled="true"
                         ></v-text-field>
                       </td>
                     </template>
@@ -301,10 +302,7 @@
                 <v-flex class="text-xs-right">
                   <strong>Igv: </strong>S/.
                   {{
-                    (totalImpuesto = (
-                      (total * igv) /
-                      (100 + igv)
-                    ).toFixed(2))
+                    (totalImpuesto = ((total * igv) /(100 + igv)).toFixed(2))
                   }}
                 </v-flex>
                 <v-flex class="text-xs-right">
@@ -419,7 +417,7 @@ export default {
       for (var i = 0; i < this.detalles.length; i++) {
         resultado =
           resultado +
-          (this.detalles[i].precio * this.detalles[i].cantidad -
+          ((this.detalles[i].precio * this.detalles[i].cantidad) -
             this.detalles[i].descuento);
       }
       return resultado;

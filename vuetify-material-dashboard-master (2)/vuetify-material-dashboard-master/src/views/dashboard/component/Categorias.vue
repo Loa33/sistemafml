@@ -254,7 +254,7 @@ export default {
               console.log(error);
             });
         }
-        }else if (this.encuentra(this.nombre)) {
+        else if (this.encuentra(this.nombre)) {
         console.log(this.nombre);
         this.$swal("La categoria ya existe");
       }else {
@@ -269,6 +269,7 @@ export default {
             }).catch(function(error){
               console.log(error);
             });
+        }
         }
       
     },

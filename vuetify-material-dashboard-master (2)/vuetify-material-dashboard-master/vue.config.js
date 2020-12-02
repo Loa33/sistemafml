@@ -1,10 +1,8 @@
 module.exports = {
-  devServer: {
-    disableHostCheck: true,
-  },
-
-  transpileDependencies: ['vuetify'],
-
+  productionSourceMap: false,  
+  outputDir: '../dist',
+  assetsDir: 'static',
+  indexPath: 'templates/index.html',
   pluginOptions: {
     i18n: {
       locale: 'en',
@@ -13,4 +11,4 @@ module.exports = {
       enableInSFC: false,
     },
   },
-}
+};
